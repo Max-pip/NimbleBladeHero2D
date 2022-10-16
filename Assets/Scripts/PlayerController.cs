@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,8 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce;
 
     //Health
-    private int _maxHealth = 100;
-    int currentHealth;
+    public int maxHealth = 100;
+    public int currentHealth;
 
     //Attack
     [SerializeField] private Transform _attackPoint;
@@ -35,6 +36,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _checkRadius;
     [SerializeField] private LayerMask _groundMask;
 
+    //Dead
+    [SerializeField] private UnityEvent _dead;
+
+    public HealthBar healthBar;
     private PlayerAnimations _anim;
     private Rigidbody2D _Rigidbody;
     [SerializeField] private SpriteRenderer _spriteRenderer;
@@ -43,7 +48,8 @@ public class PlayerController : MonoBehaviour
     {
         _Rigidbody = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<PlayerAnimations>();
-        currentHealth = _maxHealth;
+        currentHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
 
@@ -162,6 +168,7 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        healthBar.SetHealth(currentHealth);
         _nextAttackTime = Time.time + 1f / _attackRate;
 
         if (currentHealth > 0)
@@ -182,5 +189,6 @@ public class PlayerController : MonoBehaviour
         Destroy(GetComponent<Rigidbody2D>());
         GetComponent<Collider2D>().enabled = false;
         this.enabled = false;
+        _dead?.Invoke();
     }
 }
