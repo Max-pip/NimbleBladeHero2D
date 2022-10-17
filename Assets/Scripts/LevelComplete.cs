@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelComplete : MonoBehaviour
 {
     [SerializeField] private GameObject _openDoor;
+    [SerializeField] private GameObject _winPanel;
 
     void Start()
     {
@@ -20,6 +21,7 @@ public class LevelComplete : MonoBehaviour
     {
         if (_openDoor.activeInHierarchy)
         {
+            _winPanel.SetActive(true);
             Debug.Log("Complete");
         }
     }

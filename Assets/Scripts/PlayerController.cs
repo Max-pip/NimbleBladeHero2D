@@ -8,6 +8,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
 
+    //Sound
+    [SerializeField] private AudioSource _attackSound;
+    [SerializeField] private AudioSource _jumpSound;
+    [SerializeField] private AudioSource _hurtSound;
+    [SerializeField] private AudioSource _deathSound;
+
     //Health
     public int maxHealth = 100;
     public int currentHealth;
@@ -41,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
     public HealthBar healthBar;
     private PlayerAnimations _anim;
-    private Rigidbody2D _Rigidbody;
+    public Rigidbody2D _Rigidbody;
     [SerializeField] private SpriteRenderer _spriteRenderer;
 
     void Start()
@@ -102,6 +108,7 @@ public class PlayerController : MonoBehaviour
     {
         _Rigidbody.velocity = Vector2.up * _jumpForce;
         _anim.Jump();
+        _jumpSound.Play();
     }
 
     private void CheckGround()
@@ -141,6 +148,7 @@ public class PlayerController : MonoBehaviour
     private void LightAttack()
     {
         _anim.Attack();
+        _attackSound.Play();
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(_attackPoint.position, _attackRange, _enemyLayer);
         
@@ -165,6 +173,11 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void CatchTrap(int jumpForce)
+    {
+        _Rigidbody.velocity = Vector2.up * jumpForce;
+    }
+
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -174,6 +187,7 @@ public class PlayerController : MonoBehaviour
         if (currentHealth > 0)
         {
             _anim.TakeDamage();
+            _hurtSound.Play();
         }
 
         if (currentHealth <= 0)
@@ -185,6 +199,7 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         _anim.Death();
+        _deathSound.Play();
 
         Destroy(GetComponent<Rigidbody2D>());
         GetComponent<Collider2D>().enabled = false;

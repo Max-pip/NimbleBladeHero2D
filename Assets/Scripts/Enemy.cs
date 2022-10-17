@@ -5,6 +5,10 @@ using Pathfinding;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private AudioSource _hurtSound;
+    [SerializeField] private AudioSource _attackSound;
+    [SerializeField] private AudioSource _deadSound;
+
     [SerializeField] private Transform _target;
 
     private float _speed = 1.5f;
@@ -129,6 +133,7 @@ public class Enemy : MonoBehaviour
             player.GetComponent<PlayerController>().TakeDamage(_attackDamage);
         }
         _anim.Attack();
+        _attackSound.Play();
     }
 
     private void OnDrawGizmosSelected()
@@ -146,6 +151,11 @@ public class Enemy : MonoBehaviour
 
         _anim.TakeDamage();
 
+        if (currentHealth > 0)
+        {
+            _hurtSound.Play();
+        }
+
         if(currentHealth <= 0)
         {
             Die();
@@ -155,6 +165,7 @@ public class Enemy : MonoBehaviour
     void Die()
     {
         _anim.Death();
+        _deadSound.Play();
 
         Destroy(GetComponent<Rigidbody2D>());
         GetComponent<Collider2D>().enabled = false;
